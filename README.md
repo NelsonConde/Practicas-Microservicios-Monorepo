@@ -1,6 +1,6 @@
 # Prácticas de Microservicios
 
-**Autor:** Nelson Conde - 1152391 
+**Autor:** Nelson Conde - 1152391  
 **Asignatura:** Desarrollo de Aplicaciones Basadas en Microservicios  
 **Universidad:** Universidad Francisco de Paula Santander
 
@@ -15,7 +15,7 @@ En esta primera fase trabajamos con dos microservicios:
 - **Catálogo:** administra los productos.
 - **Pedidos:** registra pedidos y consulta a Catálogo para comprobar que el producto existe y tiene stock suficiente.
 
-Cada uno está en su propia carpeta (`catalogo/` y `pedidos/`), dentro del mismo repositorio.
+Los dos microservicios se encuentran actualmente dentro de `taller-docker/`, en las carpetas `catalogo/` y `pedidos/`.
 
 ### Preguntas de la actividad
 
@@ -77,13 +77,13 @@ El Dockerfile utiliza una construcción por etapas porque las herramientas neces
 
 **4. ¿Qué pasó con el producto que crearon después de reiniciar Catálogo? ¿Por qué? ¿Qué se necesitaría para que no se pierda?**
 
-El producto creado se perdió después de reiniciar Catálogo porque el microservicio utiliza actualmente una base de datos H2 en memoria. Esto significa que la información existe mientras la aplicación está en ejecución, pero al detener o reiniciar el contenedor esa memoria se elimina y la base de datos vuelve a su estado inicial. Para conservar los productos entre reinicios sería necesario utilizar persistencia externa, por ejemplo una base de datos PostgreSQL, y asociarla a un volumen de Docker para que los datos no dependan del ciclo de vida del contenedor.
+El producto creado se perdió después de reiniciar Catálogo porque, en esa etapa de la actividad, el microservicio utilizaba una base de datos H2 en memoria. Esto significa que la información existía mientras la aplicación estaba en ejecución, pero al detener o reiniciar el contenedor esa memoria se eliminaba y la base de datos volvía a su estado inicial. Para conservar los productos entre reinicios se requería persistencia externa, como PostgreSQL asociada a un volumen Docker, solución implementada posteriormente en el reto opcional.
 
 **5. `depends_on` arranca Catálogo antes que Pedidos. ¿Garantiza eso que Catálogo ya esté listo para responder cuando Pedidos recibe su primer pedido?**
 
 No. `depends_on` establece el orden en el que Docker Compose inicia los contenedores, por lo que Catálogo comienza antes que Pedidos, pero esto no significa que Spring Boot ya haya terminado completamente su proceso de inicialización. Puede ocurrir que el contenedor de Catálogo ya esté iniciado mientras la aplicación todavía está cargando. En ese caso, Pedidos podría intentar comunicarse con él y recibir un error. Para controlar esta situación se puede utilizar una verificación de salud o `healthcheck`, de manera que se pueda comprobar que Catálogo realmente está disponible antes de depender de él.
 
-#### Reto opcional — Persistencia con PostgreSQL
+### Reto opcional — Persistencia con PostgreSQL
 
 Se reemplazó la base de datos H2 en memoria del servicio Catálogo por PostgreSQL ejecutado en un contenedor independiente.
 
