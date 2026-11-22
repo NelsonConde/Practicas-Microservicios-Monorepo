@@ -32,7 +32,7 @@ public class PedidoController {
     @GetMapping
     public List<Pedido> listar(@RequestParam(name = "nombre", required = false) String nombre) {
         if (nombre != null) {
-            return repositorio.findByNombreContainingIgnoreCase(nombre);
+            return repositorio.findByNombreProductoContainingIgnoreCase(nombre);
         }
         return repositorio.findAll();
     }
