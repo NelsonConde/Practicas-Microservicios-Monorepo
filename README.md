@@ -82,3 +82,15 @@ El producto creado se perdió después de reiniciar Catálogo porque el microser
 **5. `depends_on` arranca Catálogo antes que Pedidos. ¿Garantiza eso que Catálogo ya esté listo para responder cuando Pedidos recibe su primer pedido?**
 
 No. `depends_on` establece el orden en el que Docker Compose inicia los contenedores, por lo que Catálogo comienza antes que Pedidos, pero esto no significa que Spring Boot ya haya terminado completamente su proceso de inicialización. Puede ocurrir que el contenedor de Catálogo ya esté iniciado mientras la aplicación todavía está cargando. En ese caso, Pedidos podría intentar comunicarse con él y recibir un error. Para controlar esta situación se puede utilizar una verificación de salud o `healthcheck`, de manera que se pueda comprobar que Catálogo realmente está disponible antes de depender de él.
+
+#### Reto opcional — Persistencia con PostgreSQL
+
+Se reemplazó la base de datos H2 en memoria del servicio Catálogo por PostgreSQL ejecutado en un contenedor independiente.
+
+Los datos de PostgreSQL se almacenan mediante un volumen Docker, permitiendo conservar los productos aunque el contenedor del servicio Catálogo sea reiniciado.
+
+En la siguiente evidencia se observan los productos antes del reinicio de Catálogo y nuevamente después del reinicio, verificando que los datos permanecen almacenados.
+
+<p align="center">
+  <img src="./taller-docker/evidencias/04-postgresql-persistencia.png" alt="Persistencia de productos con PostgreSQL y Docker Volume" width="760">
+</p>

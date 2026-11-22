@@ -1,8 +1,25 @@
 services:
+  catalogo-db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: catalogo
+      POSTGRES_USER: catalogo
+      POSTGRES_PASSWORD: catalogo123
+    volumes:
+      - catalogo-datos:/var/lib/postgresql/data
+
   catalogo:
     build: ./catalogo
     ports:
       - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://catalogo-db:5432/catalogo
+      SPRING_DATASOURCE_USERNAME: catalogo
+      SPRING_DATASOURCE_PASSWORD: catalogo123
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      - catalogo-db
+    restart: on-failure
 
   pedidos:
     build: ./pedidos
@@ -12,3 +29,6 @@ services:
       CATALOGO_URL: http://catalogo:8081
     depends_on:
       - catalogo
+
+volumes:
+  catalogo-datos:
